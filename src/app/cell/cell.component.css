@@ -1,0 +1,27 @@
+.app-cell {
+	display: flex;
+	width: 100px;
+	height: 100px;
+	background-size: 100px 100px;
+	background-color: #FFF
+}
+
+.app-cell:hover {
+	background-color: #CCC
+}
+
+.not-taken {
+	background-image: ''
+}
+
+.x-taken {
+	background-image: url('./X.svg');
+}
+
+.o-taken {
+	background-image: url('./O.svg');
+}
+
+.win-case {
+	background-color: #88cc88;
+}
