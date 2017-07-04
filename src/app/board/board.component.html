@@ -1,5 +1,30 @@
 <div>
-	<table style="background-color: #444; border-collapse: collapse;">
+	Against:
+	<select [(ngModel)]="computer.level" (ngModelChange)="log('Mudou o nivel', $event)">
+		<option *ngFor="let level of computer.levels; let i=index" [ngValue]="level">
+			{{ level.name }}
+		</option>
+	</select>
+
+	<table style="border-collapse: collapse; margin: 0px auto;">
+		<tr [ngClass]="{'win-line': won && players[won.player] === you }">
+			<td>You:</td>
+			<td><app-cell id="you" [id]="-1" [taken]="you" [win]="won && players[won.player] === you"></app-cell></td>
+			<td></td>
+		</tr>
+		<tr [ngClass]="{'win-line': won && players[won.player] === other }">
+			<td>{{computer.level.name}}:</td>
+			<td><app-cell id="other" [id]="-2" [taken]="other" [win]="won && players[won.player] === other"></app-cell></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>it's</td>
+			<td><app-cell id="vez" [id]="-3" [taken]="players[vez]"></app-cell></td>
+			<td>turn.</td>
+		</tr>
+	</table>
+
+	<table style="background-color: #444; border-collapse: collapse; margin: 0px auto;">
 		<tr *ngFor="let ii of [0,1,2]">
 			<td *ngFor="let oo of [0,1,2]" [ngStyle]="{'padding-top': '0px', 'padding-left': '0px', 'padding-right': oo !== 2 ? '2px' : '0px', 'padding-bottom': ii !== 2 ? '2px' : '0px'}">
 				<ng-container *ngFor=" let id of [(ii * 3 + oo)]">
@@ -8,4 +33,7 @@
 			</td>
 		</tr>
 	</table>
+
+	<h1 *ngIf="won">Jogador {{ won.player }} venceu!</h1>
+	<h1 *ngIf="velha">Deu velha!</h1>
 </div>

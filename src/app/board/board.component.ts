@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ComputerService } from '../computer.service';
 
 @Component({
   selector: 'app-board',
@@ -23,18 +24,24 @@ export class BoardComponent implements OnInit {
   ptakes: Array<Array<number>>;
   won: { player: number; case: Array<number> } = null;
   velha = false;
+  log = console.log;
+  you = 'x';
+  other = 'o';
 
-  constructor() {}
+  constructor(public computer: ComputerService) {}
 
   clicked(id: number) {
     if (this.won || this.velha) {
       this.clear();
     } else if (this.takens[id] === '') {
-      this.processMovement(id);
+      this.processMovement(id, true);
     }
   }
 
   clear() {
+    console.log('Reiniciou...', this.computer.level);
+    this.you = this.players[this.vez];
+    this.other = this.players[(this.vez + 1) % 2];
     this.ptakes = new Array<Array<number>>(
       new Array<number>(),
       new Array<number>()
@@ -44,7 +51,7 @@ export class BoardComponent implements OnInit {
     this.velha = false;
   }
 
-  processMovement(id: number) {
+  processMovement(id: number, human: boolean) {
     // pega a casa
     this.takens[id] = this.players[this.vez];
     this.ptakes[this.vez].push(id);
@@ -54,11 +61,18 @@ export class BoardComponent implements OnInit {
       console.log('Ganhou:', this.won);
     }
 
-    this.velha = this.takens.filter(e => e === '').length === 0;
+    this.velha = this.takens.filter(e => e === '').length === 0 && !this.won;
 
     // vez do próximo
     this.vez += 1;
     this.vez %= 2;
+
+    if (this.computer && human && !this.won && !this.velha) {
+      const mvmt = this.computer.processMovement();
+      if (mvmt !== undefined) {
+        this.processMovement(mvmt, false);
+      }
+    }
   }
 
   checkWin(): { player: number; case: Array<number> } {
@@ -76,5 +90,8 @@ export class BoardComponent implements OnInit {
 
   ngOnInit() {
     this.clear();
+    if (this.computer) {
+      this.computer.setBoard(this);
+    }
   }
 }
